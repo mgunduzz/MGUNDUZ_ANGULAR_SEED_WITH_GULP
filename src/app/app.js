@@ -5,8 +5,7 @@
         .module('myApp', [
             'ngMaterial','ui.router', 'ngAnimate',
 
-            'myApp.todos',
-            'myApp.version'
+            'myApp.todos'
 
         ]);
 })();

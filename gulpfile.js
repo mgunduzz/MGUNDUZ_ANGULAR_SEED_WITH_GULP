@@ -17,34 +17,44 @@ var angularFilesort = require('gulp-angular-filesort');
 
 
 var paths = {
-    root: 'app',
-    src: 'app/src',
-    src_js: 'app/src/**/*.js',
-    src_css: 'app/src/**/*.css',
-    src_sass: 'app/src/**/*.scss',
-    src_html: 'app/src/**/*.html',
-    bower_components: 'app/bower_components',
-    index: 'app/index.html',
+    root: 'src',
+    app: 'src/app',
+    app_js: 'src/app/**/*.js',
+    app_css: 'src/app/**/*.css',
+    app_sass: 'src/app/**/*.scss',
+    app_html: 'src/app/**/*.html',
+    bower_components: 'src/app/bower_components',
+    index: 'src/index.html',
+    index_root: 'src',
     libs: 'libs',
-    tmp: 'app/tmp/',
-    tmp_css_root: 'app/tmp/css',
-    app_css_file: 'app/app.scss',
-    tmp_css_file: 'app/tmp/css/tmp.css'
+    tmp: 'src/tmp/',
+    app_css_file: 'src/app/app.scss',
+    tmp_css_root: 'src/tmp/css',
+    tmp_css_file: 'src/tmp/css/tmp.css'
 };
 
 
 // Static server
-gulp.task('default', ['bower', 'js', 'sass'], function () {
+
+gulp.task('run',[], function() {
     browserSync.init({
         server: {
             baseDir: paths.root
-        }
+        },
+        port:3010
     });
+});
 
-    gulp.watch(paths.src_sass, ['sass']);
-    gulp.watch(paths.src_html).on('change', browserSync.reload);
+
+gulp.task('watch', [] , function() {
+    gulp.watch(paths.app_sass, ['sass']);
+    gulp.watch(paths.app_html).on('change', browserSync.reload);
+    gulp.watch(paths.app_js).on('change', browserSync.reload);
     gulp.watch(paths.index).on('change', browserSync.reload);
-    gulp.watch(paths.src_js).on('change', browserSync.reload);
+});
+
+gulp.task('default', ['bower', 'js', 'sass','run', 'watch'], function () {
+    //
 });
 
 
@@ -58,7 +68,7 @@ gulp.task('bower', function () {
           optional: 'configuration',
           goes: 'here'
       }))
-      .pipe(gulp.dest(paths.root));
+      .pipe(gulp.dest(paths.index_root));
 });
 
 ///////////////////////////////////
@@ -68,9 +78,10 @@ gulp.task('bower', function () {
 gulp.task('js', ['js-inject']);
 
 gulp.task('js-inject', function () {
-    gulp.src(paths.index)
-        .pipe(inject(gulp.src([paths.src_js]).pipe(angularFilesort()), { relative: true }))
-        .pipe(gulp.dest(paths.root));
+    gulp.src(paths.index)    
+        .pipe(debug())
+        .pipe(inject(gulp.src([paths.app_js]).pipe(angularFilesort()), { relative: true }))
+        .pipe(gulp.dest(paths.index_root));
 });
 
 ///////////////////////////////////
@@ -78,7 +89,7 @@ gulp.task('js-inject', function () {
 ///////////////////////////////////
 
 gulp.task('sass-concat', function () {
-    return gulp.src([paths.app_css_file, paths.src_sass])
+    return gulp.src([paths.app_css_file, paths.app_sass])
         .pipe(sass())
         .pipe(concat('tmp.css'))
         .pipe(gulp.dest(paths.tmp_css_root))
@@ -88,7 +99,7 @@ gulp.task('sass-concat', function () {
 gulp.task('sass-inject', ['sass-concat'], function () {
     gulp.src(paths.index)
       .pipe(inject(gulp.src([paths.tmp_css_file], { read: false }), { relative: true }))
-      .pipe(gulp.dest(paths.root));
+      .pipe(gulp.dest(paths.index_root));
 });
 
 gulp.task('sass', ['sass-inject']);

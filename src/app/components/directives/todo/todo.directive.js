@@ -14,7 +14,7 @@
                 todo:'='
             },
             link: link,
-            templateUrl: 'src/components/directives/todo/todo.directive.tmpl.html'
+            templateUrl: 'app/components/directives/todo/todo.directive.tmpl.html'
         };
         return directive;
 

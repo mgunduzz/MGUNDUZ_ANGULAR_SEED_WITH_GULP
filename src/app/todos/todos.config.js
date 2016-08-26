@@ -13,7 +13,7 @@
         $stateProvider
             .state('todos', {
                 url: '/',
-                templateUrl: 'src/todos/todo-list/todo-list.tmpl.html',
+                templateUrl: 'app/todos/todo-list/todo-list.tmpl.html',
                 controller: 'TodoListController',
                 controllerAs: 'vm'
             });
